@@ -1,3 +1,5 @@
+#!/usr/bin/env python36 
+
 import json
 import sys
 import getopt
@@ -107,7 +109,7 @@ class TestGen():
             print("")
 
             return
-    def ProcessTestQuestions(self, randomize=False, answerkey=False, r_just=3, l_just=20):
+    def ProcessTestQuestions(self, randomize=False, answerkey=False, r_just=3, l_just=20, **options):
 
 
         if not self.data:
@@ -125,10 +127,10 @@ class TestGen():
 
             if i['type'] == "true_false":
 
-                                if i['answer'] not in i['selections']:
-                                    print(" Error: an \"answer\" exact match must be found within the \"selections\"")
-                                    sys.exit(1)
-                                print("{}. {}\n".format(j, i['question']))
+                if i['answer'] not in i['selections']:
+                     print(" Error: an \"answer\" exact match must be found within the \"selections\"")
+                     sys.exit(1)
+                print("{}. {}\n".format(j, i['question']))
                 for k, l in zip('abcdefghijklmonpqrstuvwxyz', i['selections']):
                     print("{}. {}".format(str.rjust(k, 3), l))
                 if answerkey:
@@ -144,6 +146,16 @@ class TestGen():
             elif i['type'] == 'fill_in_the_blank':
                 q = i['question'].format(**i)
                 print("{}. {}\n".format(j, q))
+                if answerkey:
+                    print("\nANSWER={}\n".format(i['answer']))
+
+            elif i['type'] == 'essay':
+                q = i['question'].format(**i)
+                print("{}. {}\n".format(j, q))
+                if 'lines' in i:
+                    for j in lines:
+                        print("")
+
                 if answerkey:
                     print("\nANSWER={}\n".format(i['answer']))
                 
@@ -218,7 +230,7 @@ if __name__ == "__main__":
             sys.exit(1)
         elif o in ("-k", "--key"):
             options["answerkey"] = True
-        elif o in ("-r", "--randomize"):
+        elif o in ("-R", "--randomize"):
             options["randomize"] = True
         elif o in ("-J", "--json-file"):
             options["json_file"] = a
@@ -229,12 +241,13 @@ if __name__ == "__main__":
             assert False, "unhandled option"
 
     if 'json_file' not in options.items():
-            print("")
+            print("You need to pass in a JSON file for processing... ")
+
             
 
             
     c = TestGen()
-    c.Load("test.json")
+    c.Load(options['json_file'])
     c.ProcessFormData()
     c.ProcessTestQuestions(**options)
 

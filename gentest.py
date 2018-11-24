@@ -153,10 +153,10 @@ class TestGen():
                 q = i['question'].format(**i)
                 print("{}. {}\n".format(j, q))
                 if 'lines' in i:
-                    for j in lines:
+                    for j in range(i['lines']):
                         print("")
 
-                if answerkey:
+                if answerkey and 'answer' in i.items():
                     print("\nANSWER={}\n".format(i['answer']))
                 
             elif i['type'] == 'matching':

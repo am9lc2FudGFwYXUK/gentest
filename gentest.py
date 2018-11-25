@@ -76,20 +76,26 @@ class TestGen():
 
     def __init__(self):
 
+        self.data = dict() 
 
         return
 
     def Load(self, filename):
 
 
-        f = open(filename, "r")
+        for i in filename:
+            f = open(i, "r")
 
-        if not f:
+            if not f:
+               return
 
-            return
+            rc = json.load(f)
+            f.close()
 
-        self.data = json.load(f)
-        f.close() 
+            self.data.update(rc)
+
+        return self.data 
+ 
 
     def ProcessFormData(self):
 
@@ -109,12 +115,12 @@ class TestGen():
             print("")
 
             return
+
     def ProcessTestQuestions(self, randomize=False, answerkey=False, r_just=3, l_just=20, **options):
 
 
         if not self.data:
             return
-
 
         if 'questions' not in self.data.keys():
             print("Here") 
@@ -122,6 +128,9 @@ class TestGen():
 
         if randomize:
             shuffle(self.data['questions'])
+
+        if 'number_of_questions' in options.keys():
+            del self.data['questions'][options['number_of_questions']:]
 
         for i,j in zip(self.data['questions'], range(1, len(self.data['questions']) + 1)):
 
@@ -197,8 +206,9 @@ def Usage(progname):
     print("\t\t-h --help Print Help (this text)")
     print("\t\t-k --key  Produce Answer Key")
     print("\t\t-R --randomize Randomize the sequence of the questions")
-    print("\t\t-J --json-file <filename> Read details from the named JSON file")
+    print("\t\t-J --json-files <filename1,filename2,filename3> Read details from the named JSON file, or chain load")
     print("\t\t-P --print-json Print Sample JSON test definitions (and then exit)")
+    print("\t\t-n --number <Number> only produce a test with number questions...")
     print("")
 
 
@@ -212,7 +222,7 @@ if __name__ == "__main__":
             sys.exit(1)
             
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hkRJ:P", ["help", "key", "randomize", "json-file", "print-json"])
+        opts, args = getopt.getopt(sys.argv[1:], "hkRJ:Pn:", ["help", "key", "randomize", "json-file", "print-json", "number"])
     except getopt.GetoptError as err:
         # print help information and exit:
         print(str(err))  # will print something like "option -a not recognized"
@@ -233,16 +243,19 @@ if __name__ == "__main__":
         elif o in ("-R", "--randomize"):
             options["randomize"] = True
         elif o in ("-J", "--json-file"):
-            options["json_file"] = a
+            options["json_file"] = a.split(',')
         elif o in ("-P", "--print-json"):
             print(testdata()) 
             sys.exit(0)             
+        elif o in ("-n", "--number"):
+            options["number_of_questions"] = int(a)
         else:
             assert False, "unhandled option"
 
-    if 'json_file' not in options.items():
+    if 'json_file' not in options.keys():
             print("You need to pass in a JSON file for processing... ")
-
+            Usage(sys.argv[0])
+            sys.exit(1) 
             
 
             

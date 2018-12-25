@@ -201,23 +201,17 @@ def Usage(progname):
     progname = os.path.basename(progname)
 
     print("")
-    print("\t{}: Formats and creates tests from JSON description file".format(
-        progname))
+    print("\t{}: Formats and creates tests from a JSON description file".format(progname))
     print("")
     print("\tOptions:")
     print("")
     print("\t\t-h --help Print Help (this text)")
     print("\t\t-k --key  Produce Answer Key")
     print("\t\t-R --randomize Randomize the sequence of the questions")
-    print(
-        "\t\t-J --json-files <filename1,filename2,filename3> Read details from the named JSON file, or chain load"
-    )
-    print(
-        "\t\t-P --print-json Print Sample JSON test definitions (and then exit)"
-    )
-    print(
-        "\t\t-n --number <Number> only produce a test with number questions..."
-    )
+    print("\t\t-J --json-files <filename1,filename2,filename3> Read details from the named JSON file, or chain load")
+    print("\t\t-P --print-json Print Sample JSON test definitions (and then exit)")
+    print("\t\t-n --number <Number> only produce a test with number questions...")
+    print("\t\t-I --indent-json <file> indent json file and pretty print.")
     print("")
 
     return
@@ -231,8 +225,8 @@ if __name__ == "__main__":
 
     try:
         opts, args = getopt.getopt(
-            sys.argv[1:], "hkRJ:Pn:",
-            ["help", "key", "randomize", "json-file", "print-json", "number"])
+                sys.argv[1:], "hkRJ:Pn:I:",
+            ["help", "key", "randomize", "json-file", "print-json", "number", "indent-json"])
     except getopt.GetoptError as err:
         # print help information and exit:
         print(str(err))  # will print something like "option -a not recognized"
@@ -251,6 +245,12 @@ if __name__ == "__main__":
             options["answerkey"] = True
         elif o in ("-R", "--randomize"):
             options["randomize"] = True
+        elif o in ("-I", "--indent-json"):
+            with open(a, "r") as f:
+                i = json.load(f)
+                if i:
+                    print(json.dumps(i, indent=4)) 
+            sys.exit(0) 
         elif o in ("-J", "--json-file"):
             options["json_file"] = a.split(',')
         elif o in ("-P", "--print-json"):

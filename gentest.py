@@ -29,7 +29,7 @@ def testdata():
                "selections": [
                     true,
                     false
-               ], 
+               ],
                "answer":true
           },
           {
@@ -55,7 +55,7 @@ def testdata():
           {
                "type": "fill_in_the_blank",
                "question": "This is a fill in the {blank} question",
-               "blank":"________", 
+               "blank":"________",
                "answer": "Blank"
           }
      ]
@@ -139,8 +139,8 @@ class TestGen():
             if i['type'] == "true_false":
 
                 if i['answer'] not in i['selections']:
-                    print(
-                        " Error: an \"answer\" exact match must be found within the \"selections\""
+                    print(' Error: an "answer" exact match must be '
+                        'found within the "selections"'
                     )
                     sys.exit(1)
                 print("{}. {}\n".format(j, i['question']))
@@ -173,7 +173,7 @@ class TestGen():
                     print("\nANSWER={}\n".format(i['answer']))
 
             elif i['type'] == 'matching':
-                ## print(dir(i))
+                # print(dir(i))
                 q = i['question'].format(**i)
                 print("{}. {}\n".format(j, q))
 
@@ -201,15 +201,20 @@ def Usage(progname):
     progname = os.path.basename(progname)
 
     print("")
-    print("\t{}: Formats and creates tests from a JSON description file".format(progname))
+    print("\t{}: Formats and creates tests from a JSON description file"
+            .format(progname))
     print("")
     print("\tOptions:")
     print("")
     print("\t\t-h --help Print Help (this text)")
     print("\t\t-k --key  Produce Answer Key")
     print("\t\t-R --randomize Randomize the sequence of the questions")
-    print("\t\t-J --json-files <filename1,filename2,filename3> Read details from the named JSON file, or chain load")
-    print("\t\t-P --print-json Print Sample JSON test definitions (and then exit)")
+    print(
+        "\t\t-J --json-files <filename1,filename2,filename3>"
+        "Read details from the named JSON file, or chain load"
+        )
+    print("\t\t-P --print-json Print Sample JSON test definitions "
+        "(and then exit)")
     print("\t\t-n --number <Number> only produce a test with number questions...")
     print("\t\t-I --indent-json <file> indent json file and pretty print.")
     print("")
@@ -226,7 +231,16 @@ if __name__ == "__main__":
     try:
         opts, args = getopt.getopt(
                 sys.argv[1:], "hkRJ:Pn:I:",
-            ["help", "key", "randomize", "json-file", "print-json", "number", "indent-json"])
+                [
+                    "help",
+                    "key",
+                    "randomize",
+                    "json-file",
+                    "print-json",
+                    "number",
+                    "indent-json"
+                ]
+                )
     except getopt.GetoptError as err:
         # print help information and exit:
         print(str(err))  # will print something like "option -a not recognized"
@@ -249,8 +263,8 @@ if __name__ == "__main__":
             with open(a, "r") as f:
                 i = json.load(f)
                 if i:
-                    print(json.dumps(i, indent=4)) 
-            sys.exit(0) 
+                    print(json.dumps(i, indent=4))
+            sys.exit(0)
         elif o in ("-J", "--json-file"):
             options["json_file"] = a.split(',')
         elif o in ("-P", "--print-json"):
